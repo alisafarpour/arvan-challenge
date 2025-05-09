@@ -1,14 +1,58 @@
 <script setup lang="ts">
+import Header from '@/components/Header.vue'
+import Sidebar from '@/components/Sidebar.vue'
+import { useRouter } from 'vue-router'
 
-import Header from "@/components/Header.vue";
+const router = useRouter()
 </script>
 
 <template>
-<Header/>
-  <slot />
-  <footer>Footer</footer>
+  <div class="container">
+    <Header />
+    <div class="content">
+      <Sidebar
+        :dataArray="[
+          {
+            label: 'All Articles',
+            id: 'articles',
+            onClick: () => {
+              router.push('/articles')
+            },
+            selectionRule: (value: string) => value === '/articles',
+          },
+          {
+            label: 'New Articles',
+            id: 'articles/edit',
+            onClick: () => {
+              router.push('/articles/edit/salam')
+            },
+            selectionRule: (value: string) => value.includes('articles/edit'),
+          },
+        ]"
+      />
+      <div class="content__child">
+        <slot />
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped lang="scss">
+.container {
+  display: flex;
+  flex-direction: column;
+}
 
+.content {
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 72px);
+
+  &__child {
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+}
 </style>
