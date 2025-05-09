@@ -45,10 +45,12 @@ const route = useRoute()
 
   &.selected {
     background-color: $color-primary-bg-default;
+    color: $color-primary;
   }
 
   &.selected:hover {
     background-color: $color-primary-bg-hover;
+    color: $color-primary-hover;
   }
 }
 
