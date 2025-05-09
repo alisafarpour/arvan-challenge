@@ -26,7 +26,13 @@ const router = createRouter({
       path: '/articles/page/:page(\\d+)',
       name: 'ArticlesPaginated',
       component: () => import("@/pages/Articles.vue")
-    }
+    },
+    {
+      path: '/articles/edit/:slug',
+      name: 'ArticleEdit',
+      component: () => import('@/pages/EditArticle.vue'),
+      meta: { layout: 'DashboardLayout' }
+    },
     // {
     //   path: '/about',
     //   name: 'about',
