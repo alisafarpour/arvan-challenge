@@ -10,6 +10,7 @@ import { useToast } from '@/composables/useToast.ts'
 const toast = useToast()
 
 const schema = yup.object({
+  userName: yup.string().required(),
   email: yup.string().email().required(),
   password: yup.string().min(6).required(),
 })
@@ -40,13 +41,13 @@ const onSubmit = handleSubmit(
         <form @submit="onSubmit">
           <div class="grid-container">
             <div class="grid-item xs-12">
-              <TextField name="userName" label="Username" />
+              <TextField name="userName" label="Username" required />
             </div>
             <div class="grid-item xs-12">
-              <TextField name="email" label="Email" />
+              <TextField name="email" label="Email" required />
             </div>
             <div class="grid-item xs-12">
-              <TextField name="password" label="Password" type="password" />
+              <TextField name="password" label="Password" type="password" required />
             </div>
             <div class="grid-item xs-12">
               <Button type="submit" variant="primary" :customStyle="{ width: '432px', marginTop: '10px' }">

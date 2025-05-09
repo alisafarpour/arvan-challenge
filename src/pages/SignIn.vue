@@ -43,10 +43,10 @@ const onSubmit = handleSubmit(
         <form @submit="onSubmit">
           <div class="grid-container">
             <div class="grid-item xs-12">
-              <TextField name="email" label="Email" />
+              <TextField name="email" label="Email" required />
             </div>
             <div class="grid-item xs-12">
-              <TextField name="password" label="Password" type="password" />
+              <TextField name="password" label="Password" type="password" required />
             </div>
             <div class="grid-item xs-12">
               <Button type="submit" variant="primary" :customStyle="{ width: '432px', marginTop: '10px' }">
