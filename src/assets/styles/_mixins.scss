@@ -1,0 +1,24 @@
+@use 'variables' as *;
+
+@mixin typography($size, $weight, $lineHeight, $letterSpacing:'-2%') {
+  font-family: $font-primary;
+  font-size: $size;
+  font-weight: $weight;
+  line-height: $lineHeight;
+  letter-spacing: $letterSpacing;
+}
+@mixin title3 {
+  @include typography($font-size-title3, $font-weight-medium, '24px');
+}
+
+@mixin body1 {
+  @include typography($font-size-body1, $font-weight-medium, '24px');
+}
+
+@mixin body2 {
+  @include typography($font-size-body2, $font-weight-regular, '20px');
+}
+
+@mixin caption1 {
+  @include typography($font-size-caption, $font-weight-regular, '16px');
+}

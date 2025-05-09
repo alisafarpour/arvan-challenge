@@ -1,0 +1,21 @@
+@use "@/assets/styles/variables" as *;
+@use "@/assets/styles/mixins" as *;
+@use "@/assets/styles/grid" as *;
+
+
+body {
+  font-family: $font-primary;
+  color: $color-neutral-default;
+  background-color: $bg-color;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+}
+
+:root {
+  --primary: #{$color-primary};
+  --error: #{$color-error-default};
+  --white: #{$white};
+  --black: #{$black};
+  --neutral-default: #{$color-neutral-default};
+}
