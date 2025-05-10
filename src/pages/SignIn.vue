@@ -3,27 +3,53 @@ import Section from '@/components/Section.vue'
 import Button from '@/components/Button.vue'
 import TextField from '@/components/TextField.vue'
 import LinkButton from '@/components/LinkButton.vue'
-import { useForm } from 'vee-validate'
+import {useForm} from 'vee-validate'
 import * as yup from 'yup'
 import { useToast } from '@/composables/useToast.ts'
 import { useRouter } from 'vue-router'
+import {usePostData} from "@/composables/usePostData.ts";
+import type {SIGN_IN_TYPE} from "@/type/sign-in-respose.ts";
+
+type User_SIGN_IN_DATA = {email: string,password:string}
 
 const toast = useToast()
 const router = useRouter()
+
+const signIn = usePostData<{user: User_SIGN_IN_DATA},SIGN_IN_TYPE>('/users/login','signIn')
 
 const schema = yup.object({
   email: yup.string().email().required(),
   password: yup.string().min(6).required(),
 })
 
-const { handleSubmit } = useForm({
+const { handleSubmit } = useForm<User_SIGN_IN_DATA>({
   validationSchema: schema,
 })
 
 const onSubmit = handleSubmit(
   (values) => {
-    console.log('Submitted values:', values)
-    router.push('./articles')
+    signIn.mutate({user :values},{
+      onSuccess: (data: SIGN_IN_TYPE) => {
+        toast({
+          type: 'success',
+          title: 'Sign in SuccessFull :)',
+          description: 'Enjoy Dashboard',
+          duration: 3000,
+        })
+        document.cookie=`token=${data.user.token}`
+        localStorage.setItem('user-data', JSON.stringify({username: data.user.username, pictureUrl: data.user.image}))
+        router.push('./articles')
+      },
+      onError: (err) => {
+        console.log()
+        toast({
+          type: 'error',
+          title: 'Sign In Faild!',
+          description: `${err.message}`,
+          duration: 3000,
+        })
+      }
+    })
   },
   (submitErrors) => {
     toast({
@@ -49,7 +75,11 @@ const onSubmit = handleSubmit(
               <TextField name="password" label="Password" type="password" required />
             </div>
             <div class="grid-item xs-12">
-              <Button type="submit" variant="primary" :customStyle="{ width: '432px', marginTop: '10px' }">
+              <Button
+                type="submit"
+                variant="primary"
+                :customStyle="{ width: '432px', marginTop: '10px' }"
+              >
                 Sign in
               </Button>
               <div class="sign-up">

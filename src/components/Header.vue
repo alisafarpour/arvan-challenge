@@ -1,25 +1,27 @@
 <script setup lang="ts">
-import Button from "@/components/Button.vue";
-import {useRouter} from "vue-router";
+import Button from '@/components/Button.vue'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+const logoutHandler = () => {
+  router.push('/login').then(() => {
+    Object.keys(localStorage).forEach(function (storage) {
+      localStorage.removeItem(storage)
+    })
+    document.cookie = 'token' + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+  })
+}
 </script>
 
 <template>
-<div class="header-container">
-  <p>
-    Welcome <strong>{{'ali'}}</strong>
-  </p>
-  <h2>
-    Arvancloud Challenge
-  </h2>
-  <Button variant="secondary" :onClick="() =>{
-    router.push('/login')
-  }" >
-    Log out
-  </Button>
-</div>
+  <div class="header-container">
+    <p>
+      Welcome <strong>{{ 'ali' }}</strong>
+    </p>
+    <h2>Arvancloud Challenge</h2>
+    <Button variant="secondary" :onClick="logoutHandler"> Log out </Button>
+  </div>
 </template>
 
 <style scoped lang="scss">
@@ -40,6 +42,6 @@ h2 {
 }
 
 p {
-  @include body2
+  @include body2;
 }
 </style>

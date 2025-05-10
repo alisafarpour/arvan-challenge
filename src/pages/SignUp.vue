@@ -6,11 +6,15 @@ import LinkButton from '@/components/LinkButton.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useToast } from '@/composables/useToast.ts'
+import {usePostData} from "@/composables/usePostData.ts";
+import router from "@/router";
 
 const toast = useToast()
+const signUp = usePostData('/users','signUp')
+
 
 const schema = yup.object({
-  userName: yup.string().required(),
+  username: yup.string().required(),
   email: yup.string().email().required(),
   password: yup.string().min(6).required(),
 })
@@ -21,9 +25,28 @@ const { handleSubmit } = useForm({
 
 const onSubmit = handleSubmit(
   (values) => {
-    console.log('Submitted values:', values)
+    signUp.mutate({user :values},{
+      onSuccess: () => {
+        toast({
+          type: 'success',
+          title: 'Sign Up SuccessFull :)',
+          description: 'Now please login',
+          duration: 3000,
+        })
+        router.push('./login')
+      },
+      onError: (err) => {
+        console.log()
+        toast({
+          type: 'error',
+          title: 'Sign Up Faild!',
+          description: `${err.message}`,
+          duration: 3000,
+        })
+      }
+    })
   },
-  (submitErrors) => {
+  () => {
     toast({
       type: 'error',
       title: 'Sign-up Failed!',
@@ -41,7 +64,7 @@ const onSubmit = handleSubmit(
         <form @submit="onSubmit">
           <div class="grid-container">
             <div class="grid-item xs-12">
-              <TextField name="userName" label="Username" required />
+              <TextField name="username" label="Username" required />
             </div>
             <div class="grid-item xs-12">
               <TextField name="email" label="Email" required />
