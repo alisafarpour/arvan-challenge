@@ -4,6 +4,9 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+const rawData = localStorage.getItem('user-data')
+const username = rawData ? JSON.parse(rawData).username : 'unKnown'
+
 const logoutHandler = () => {
   router.push('/login').then(() => {
     Object.keys(localStorage).forEach(function (storage) {
@@ -17,10 +20,10 @@ const logoutHandler = () => {
 <template>
   <div class="header-container">
     <p>
-      Welcome <strong>{{ 'ali' }}</strong>
+      Welcome <strong>{{ username }}</strong>
     </p>
     <h2>Arvancloud Challenge</h2>
-    <Button variant="secondary" :onClick="logoutHandler"> Log out </Button>
+    <Button variant="secondary" :onClick="logoutHandler"> Log out</Button>
   </div>
 </template>
 
