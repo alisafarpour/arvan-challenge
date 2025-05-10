@@ -1,6 +1,6 @@
 {
   "name": "arvan-challenge-front",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@tanstack/vue-query": "^5.75.5",
+    "@tanstack/vue-query-devtools": "^5.75.7",
     "axios": "^1.9.0",
     "puppeteer": "^24.8.2",
     "vee-validate": "^4.15.0",

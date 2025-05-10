@@ -2,6 +2,7 @@
 import {useRoute} from "vue-router";
 import {computed} from "vue";
 import DashboardLayout from "@/components/DashboardLayout.vue";
+import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 
 const route = useRoute()
 
@@ -23,4 +24,5 @@ const layoutComponent = computed(() => {
   <component :is="layoutComponent">
     <RouterView />
   </component>
+  <VueQueryDevtools position="right" />
 </template>
