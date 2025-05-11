@@ -19,6 +19,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  disable: {
+    type: Boolean,
+    default: false,
+  },
   error: {
     type: String,
   },
@@ -40,12 +44,11 @@ const emit = defineEmits<{
 }>()
 
 function handleEnter() {
-  if (props.sendOnEnter) {
+  if (props.sendOnEnter && value.value !== '') {
     emit('enter', value.value)
     value.value = ''
   }
 }
-
 </script>
 
 <template>
@@ -55,21 +58,23 @@ function handleEnter() {
       <span v-if="required" class="required-indicator">*</span>
     </label>
     <textarea
-        v-if="rowNumber > 0"
-        v-model="value"
-        :placeholder="placeholder"
-        :rows="rowNumber"
-        :class="['text-field-input', { 'has-error': !!error }]"
-        @keydown.enter="handleEnter"
+      v-if="rowNumber > 0"
+      v-model="value"
+      :placeholder="placeholder"
+      :rows="rowNumber"
+      :class="['text-field-input', { 'has-error': !!error }]"
+      @keydown.enter="handleEnter"
+      :disabled="disable"
     />
 
     <input
-        v-else
-        :type="type || 'text'"
-        v-model="value"
-        :placeholder="placeholder"
-        :class="['text-field-input', { 'has-error': !!error }]"
-        @keydown.enter="handleEnter"
+      v-else
+      :type="type || 'text'"
+      v-model="value"
+      :placeholder="placeholder"
+      :class="['text-field-input', { 'has-error': !!error }]"
+      @keydown.enter="handleEnter"
+      :disabled="disable"
     />
     <div v-if="error || errorMessage" class="error-message">{{ error ?? errorMessage }}</div>
   </div>
