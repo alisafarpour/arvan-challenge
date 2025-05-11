@@ -30,11 +30,22 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  sendOnEnter: { type: Boolean, default: false },
 })
 
 const { value, errorMessage } = useField(() => props.name)
 
-console.log(props.rowNumber)
+const emit = defineEmits<{
+  (e: 'enter', value: string): void
+}>()
+
+function handleEnter() {
+  if (props.sendOnEnter) {
+    emit('enter', value.value)
+    value.value = ''
+  }
+}
+
 </script>
 
 <template>
@@ -49,6 +60,7 @@ console.log(props.rowNumber)
         :placeholder="placeholder"
         :rows="rowNumber"
         :class="['text-field-input', { 'has-error': !!error }]"
+        @keydown.enter="handleEnter"
     />
 
     <input
@@ -57,6 +69,7 @@ console.log(props.rowNumber)
         v-model="value"
         :placeholder="placeholder"
         :class="['text-field-input', { 'has-error': !!error }]"
+        @keydown.enter="handleEnter"
     />
     <div v-if="error || errorMessage" class="error-message">{{ error ?? errorMessage }}</div>
   </div>
@@ -83,7 +96,7 @@ console.log(props.rowNumber)
   @include body2;
   font-weight: 400;
   color: $color-neutral-disable;
-  border: 1px solid $color-neutral-default;
+  border: 1px solid $color-neutral-disable;
   border-radius: $md-radius;
   transition: all 0.3s ease;
   resize: none;
