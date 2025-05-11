@@ -11,8 +11,11 @@ import { useToast } from '@/composables/useToast.ts'
 import type {ARTICLE_SEND_TYPE, ARTICLE_TYPE} from '@/type/article-post.ts'
 import Checkbox from "@/components/Checkbox.vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
+import {useRouter} from "vue-router";
+import {queryClient} from "@/main.ts";
 
 const toast = useToast()
+const router = useRouter()
 
 const getBackTags = useGetData<{tags : string[]}>('/tags','getTags')
 const postArticle = usePostData<ARTICLE_SEND_TYPE>('/articles', 'postArticle')
@@ -48,6 +51,8 @@ const onSubmit = handleSubmit(
             duration: 3000,
           })
           getBackTags.refetch()
+          queryClient.refetchQueries({ queryKey: ['getAllArticle'] })
+          router.push('/articles')
         },
         onError: (err) => {
           toast({
@@ -149,14 +154,14 @@ watch(
   column-gap: 16px;
   flex-direction: row;
   align-content: flex-start;
-  flex-grow: 0;
+  width: 100%;
 }
 .new-article-container {
   background: $white;
   border: 1px solid $border-color;
   border-radius: $md-radius;
-  width: 752px;
   height: 100%;
+  flex: 1 1 auto;
 }
 
 .tags-container {
@@ -166,6 +171,7 @@ watch(
   width: 376px;
   padding: 24px;
   height: 100%;
+  flex-shrink: 0;
 }
 
 .tags-list {

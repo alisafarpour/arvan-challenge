@@ -53,6 +53,9 @@ const router = useRouter()
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 }
 </style>
