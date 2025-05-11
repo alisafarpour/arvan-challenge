@@ -59,8 +59,8 @@ const onSubmit = handleSubmit(
             duration: 3000,
           })
           queryClient.refetchQueries({ queryKey: ['getAllArticle'] })
-          getBackTags.refetch()
           router.push('/articles')
+          queryClient.invalidateQueries({ queryKey: ['getTags'] })
         },
         onError: (err) => {
           toast({
