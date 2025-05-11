@@ -1,11 +1,158 @@
 <script setup lang="ts">
+import Section from '@/components/Section.vue'
+import TextField from '@/components/TextField.vue'
+import Button from '@/components/Button.vue'
+import { useGetData } from '@/composables/useGetData.ts'
+import { usePostData } from '@/composables/usePostData.ts'
+import {computed, ref} from 'vue'
+import * as yup from 'yup'
+import { useForm } from 'vee-validate'
+import { useToast } from '@/composables/useToast.ts'
+import type {ARTICLE_SEND_TYPE, ARTICLE_TYPE} from '@/type/article-post.ts'
+import Checkbox from "@/components/Checkbox.vue";
 
+const toast = useToast()
+
+const getBackTags = useGetData<{tags : string[]}>('/tags','getTags')
+const postArticle = usePostData<ARTICLE_SEND_TYPE>('/articles', 'postArticle')
+const putArticle = usePostData(`/articles/${'slug'}`, 'putArticle')
+
+const newTags = ref<string[]>([])
+
+function onTextFieldEnter(value: string) {
+  newTags.value.push(value)
+}
+
+const schema = yup.object({
+  title: yup.string().required(),
+  description: yup.string().required(),
+  body: yup.string().required(),
+})
+
+const { handleSubmit } = useForm<ARTICLE_TYPE>({
+  validationSchema: schema,
+})
+
+const onSubmit = handleSubmit(
+  (values) => {
+    postArticle.mutate(
+      { article: { ...values, tagList: newTags.value } },
+      {
+        onSuccess: () => {
+          toast({
+            type: 'success',
+            title: 'New-Article',
+            description: 'Added Successfully',
+            duration: 3000,
+          })
+        },
+        onError: (err) => {
+          console.log()
+          toast({
+            type: 'error',
+            title: 'New-Article Failed',
+            description: `${err.message}`,
+            duration: 3000,
+          })
+        },
+      },
+    )
+  },
+  (submitErrors) => {
+    toast({
+      type: 'error',
+      title: 'New-Article Failed!',
+      description: 'Body and/or Title or Description is invalid',
+      duration: 3000,
+    })
+  },
+)
+
+const allTags = computed(() => {
+  const fetched = getBackTags.data.value?.tags || []
+  const combined = [...fetched, ...newTags.value]
+  return [...new Set(combined)]
+})
+
+const checked = ref(false)
 </script>
 
 <template>
-  <h1>ArticleEdit</h1>
+  <div class="main-container">
+    <div class="new-article-container">
+      <Section title="New article">
+        <form @submit="onSubmit">
+          <div class="grid-container">
+            <div class="grid-item xs-12">
+              <TextField name="title" label="Title" required/>
+            </div>
+            <div class="grid-item xs-12">
+              <TextField name="description" label="Description" required/>
+            </div>
+            <div class="grid-item xs-12">
+              <TextField name="body" :rowNumber="8" label="Body" required />
+            </div>
+            <div class="grid-item xs-12">
+              <Button variant="primary">Submit</Button>
+            </div>
+          </div>
+        </form>
+      </Section>
+    </div>
+    <div class="tags-container">
+      <TextField
+        name="tags"
+        label="Tags"
+        placeholder="New tag"
+        :sendOnEnter="true"
+        @enter="onTextFieldEnter"
+      />
+      <div class="grid-container tags-list">
+        <div class="grid-item xs-12 tag-item" v-for="tag in allTags" :key="tag">
+          <Checkbox
+              :indeterminate="true"
+              :label="tag"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped lang="scss">
+.main-container {
+  display: flex;
+  column-gap: 16px;
+  flex-direction: row;
+  align-content: flex-start;
+  flex-grow: 0;
+}
+.new-article-container {
+  background: $white;
+  border: 1px solid $border-color;
+  border-radius: $md-radius;
+  width: 752px;
+}
 
+.tags-container {
+  background: $white;
+  border: 1px solid $border-color;
+  border-radius: $md-radius;
+  width: 376px;
+  padding: 24px;
+}
+
+.tags-list {
+  width: 328px;
+  padding: 24px;
+  border: 1px solid $border-color;
+  border-radius: $xl-radius;
+}
+
+.tag-item {
+  overflow-x: hidden;
+  overflow-y: auto;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 </style>
