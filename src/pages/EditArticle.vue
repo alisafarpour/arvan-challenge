@@ -4,12 +4,13 @@ import TextField from '@/components/TextField.vue'
 import Button from '@/components/Button.vue'
 import { useGetData } from '@/composables/useGetData.ts'
 import { usePostData } from '@/composables/usePostData.ts'
-import {computed, ref} from 'vue'
+import {computed, ref, watch} from 'vue'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
 import { useToast } from '@/composables/useToast.ts'
 import type {ARTICLE_SEND_TYPE, ARTICLE_TYPE} from '@/type/article-post.ts'
 import Checkbox from "@/components/Checkbox.vue";
+import LoadingSpinner from "@/components/LoadingSpinner.vue";
 
 const toast = useToast()
 
@@ -21,6 +22,7 @@ const newTags = ref<string[]>([])
 
 function onTextFieldEnter(value: string) {
   newTags.value.push(value)
+  tagStates.value[value] = true
 }
 
 const schema = yup.object({
@@ -45,9 +47,9 @@ const onSubmit = handleSubmit(
             description: 'Added Successfully',
             duration: 3000,
           })
+          getBackTags.refetch()
         },
         onError: (err) => {
-          console.log()
           toast({
             type: 'error',
             title: 'New-Article Failed',
@@ -74,7 +76,22 @@ const allTags = computed(() => {
   return [...new Set(combined)]
 })
 
-const checked = ref(false)
+const tagStates = ref<Record<string, boolean>>({})
+
+watch(
+    [() => getBackTags.data.value?.tags, newTags],
+    ([newBackTags, newNewTags]) => {
+      const mergedTags = new Set([...(newBackTags || []), ...newNewTags])
+
+      for (const tag of mergedTags) {
+        if (!(tag in tagStates.value)) {
+          tagStates.value[tag] = true
+        }
+      }
+    },
+    { immediate: true }
+)
+
 </script>
 
 <template>
@@ -102,15 +119,19 @@ const checked = ref(false)
     <div class="tags-container">
       <TextField
         name="tags"
+        :disable="getBackTags.isLoading.value"
         label="Tags"
         placeholder="New tag"
         :sendOnEnter="true"
         @enter="onTextFieldEnter"
       />
       <div class="grid-container tags-list">
-        <div class="grid-item xs-12 tag-item" v-for="tag in allTags" :key="tag">
+        <div class="loading-tags" v-if="getBackTags.isLoading.value">
+          <LoadingSpinner variant="black" :size=20 />
+        </div>
+        <div v-else class="grid-item xs-12 tag-item" v-for="tag in allTags" :key="tag">
           <Checkbox
-              :indeterminate="true"
+              v-model="tagStates[tag]"
               :label="tag"
           />
         </div>
@@ -132,6 +153,7 @@ const checked = ref(false)
   border: 1px solid $border-color;
   border-radius: $md-radius;
   width: 752px;
+  height: 100%;
 }
 
 .tags-container {
@@ -140,6 +162,7 @@ const checked = ref(false)
   border-radius: $md-radius;
   width: 376px;
   padding: 24px;
+  height: 100%;
 }
 
 .tags-list {
@@ -147,6 +170,17 @@ const checked = ref(false)
   padding: 24px;
   border: 1px solid $border-color;
   border-radius: $xl-radius;
+  display: flex;
+  row-gap: 16px;
+  max-height: 650px;
+  overflow-y: auto;
+}
+.loading-tags {
+  width: 328px;
+  border-radius: $xl-radius;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .tag-item {
