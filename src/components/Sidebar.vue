@@ -32,6 +32,7 @@ const route = useRoute()
   height: auto;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   row-gap: 8px;
 }
 
