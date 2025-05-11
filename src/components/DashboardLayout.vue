@@ -22,11 +22,11 @@ const router = useRouter()
           },
           {
             label: 'New Articles',
-            id: 'articles/edit',
+            id: 'articles/create',
             onClick: () => {
-              router.push('/articles/edit/salam')
+              router.push('/articles/create')
             },
-            selectionRule: (value: string) => value.includes('articles/edit'),
+            selectionRule: (value: string) => (value.includes('articles/edit') || value.includes('articles/create')),
           },
         ]"
       />
