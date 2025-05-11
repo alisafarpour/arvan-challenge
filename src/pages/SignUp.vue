@@ -36,7 +36,6 @@ const onSubmit = handleSubmit(
         router.push('./login')
       },
       onError: (err) => {
-        console.log()
         toast({
           type: 'error',
           title: 'Sign Up Faild!',

@@ -41,7 +41,6 @@ const onSubmit = handleSubmit(
         router.push('./articles')
       },
       onError: (err) => {
-        console.log()
         toast({
           type: 'error',
           title: 'Sign In Faild!',
@@ -60,8 +59,6 @@ const onSubmit = handleSubmit(
     })
   },
 )
-
-console.log()
 </script>
 
 <template>

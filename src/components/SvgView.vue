@@ -9,7 +9,7 @@ const props = defineProps<{
 
 const size = props.size ?? 20
 const color = props.color ?? 'inherit'
-console.log(size)
+
 </script>
 
 <template>
