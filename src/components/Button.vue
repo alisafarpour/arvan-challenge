@@ -58,7 +58,7 @@ const handleClick = (event: MouseEvent) => {
     :type="type"
   >
     <template v-if="loading">
-      <LoadingSpinner :variant="variant === 'secondary' ? 'black' : 'white'" :size="20" />
+      <LoadingSpinner :variant="variant === 'secondary' ? 'black' : 'white'" :size="17" />
     </template>
     <template v-else>
       <slot />
