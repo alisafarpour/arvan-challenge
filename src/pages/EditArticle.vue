@@ -4,24 +4,25 @@ import TextField from '@/components/TextField.vue'
 import Button from '@/components/Button.vue'
 import { useGetData } from '@/composables/useGetData.ts'
 import { usePostData } from '@/composables/usePostData.ts'
-import {computed, ref, watch} from 'vue'
+import { computed, ref, watch } from 'vue'
 import * as yup from 'yup'
 import { useForm } from 'vee-validate'
 import { useToast } from '@/composables/useToast.ts'
-import type {ARTICLE_SEND_TYPE, ARTICLE_TYPE} from '@/type/article-post.ts'
-import Checkbox from "@/components/Checkbox.vue";
-import LoadingSpinner from "@/components/LoadingSpinner.vue";
-import {useRouter} from "vue-router";
-import {queryClient} from "@/main.ts";
+import type { ARTICLE_SEND_TYPE, ARTICLE_TYPE } from '@/type/article-post.ts'
+import Checkbox from '@/components/Checkbox.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import { useRouter } from 'vue-router'
+import { queryClient } from '@/main.ts'
 
 const toast = useToast()
 const router = useRouter()
 
-const getBackTags = useGetData<{tags : string[]}>('/tags','getTags')
+const getBackTags = useGetData<{ tags: string[] }>('/tags', 'getTags')
 const postArticle = usePostData<ARTICLE_SEND_TYPE>('/articles', 'postArticle')
 const putArticle = usePostData(`/articles/${'slug'}`, 'putArticle')
 
 const newTags = ref<string[]>([])
+const tagStates = ref<Record<string, boolean>>({})
 
 function onTextFieldEnter(value: string) {
   newTags.value.push(value)
@@ -41,7 +42,14 @@ const { handleSubmit } = useForm<ARTICLE_TYPE>({
 const onSubmit = handleSubmit(
   (values) => {
     postArticle.mutate(
-      { article: { ...values, tagList: newTags.value } },
+      {
+        article: {
+          ...values,
+          tagList: Object.entries(tagStates.value)
+            .filter(([key, value]) => !!value)
+            .map(([key, value]) => key),
+        },
+      },
       {
         onSuccess: () => {
           toast({
@@ -50,8 +58,8 @@ const onSubmit = handleSubmit(
             description: 'Added Successfully',
             duration: 3000,
           })
-          getBackTags.refetch()
           queryClient.refetchQueries({ queryKey: ['getAllArticle'] })
+          getBackTags.refetch()
           router.push('/articles')
         },
         onError: (err) => {
@@ -81,22 +89,19 @@ const allTags = computed(() => {
   return [...new Set(combined)]
 })
 
-const tagStates = ref<Record<string, boolean>>({})
-
 watch(
-    [() => getBackTags.data.value?.tags, newTags],
-    ([newBackTags, newNewTags]) => {
-      const mergedTags = new Set([...(newBackTags || []), ...newNewTags])
+  [() => getBackTags.data.value?.tags, newTags],
+  ([newBackTags, newNewTags]) => {
+    const mergedTags = new Set([...(newBackTags || []), ...newNewTags])
 
-      for (const tag of mergedTags) {
-        if (!(tag in tagStates.value)) {
-          tagStates.value[tag] = true
-        }
+    for (const tag of mergedTags) {
+      if (!(tag in tagStates.value)) {
+        tagStates.value[tag] = true
       }
-    },
-    { immediate: true }
+    }
+  },
+  { immediate: true },
 )
-
 </script>
 
 <template>
@@ -106,10 +111,10 @@ watch(
         <form @submit="onSubmit">
           <div class="grid-container">
             <div class="grid-item xs-12">
-              <TextField name="title" label="Title" required/>
+              <TextField name="title" label="Title" required />
             </div>
             <div class="grid-item xs-12">
-              <TextField name="description" label="Description" required/>
+              <TextField name="description" label="Description" required />
             </div>
             <div class="grid-item xs-12">
               <TextField name="body" :rowNumber="8" label="Body" required />
@@ -132,16 +137,13 @@ watch(
       />
       <div class="grid-container tags-list">
         <div class="loading-tags" v-if="getBackTags.isLoading.value">
-          <LoadingSpinner variant="black" :size=20 />
+          <LoadingSpinner variant="black" :size="20" />
         </div>
         <div v-else-if="allTags.length === 0" class="loading-tags">
           <span>No Data to Display</span>
         </div>
         <div v-else class="grid-item xs-12 tag-item" v-for="tag in allTags" :key="tag">
-          <Checkbox
-              v-model="tagStates[tag]"
-              :label="tag"
-          />
+          <Checkbox v-model="tagStates[tag]" :label="tag" />
         </div>
       </div>
     </div>
@@ -156,6 +158,7 @@ watch(
   align-content: flex-start;
   width: 100%;
 }
+
 .new-article-container {
   background: $white;
   border: 1px solid $border-color;
@@ -184,6 +187,7 @@ watch(
   max-height: 650px;
   overflow-y: auto;
 }
+
 .loading-tags {
   width: 328px;
   border-radius: $xl-radius;
