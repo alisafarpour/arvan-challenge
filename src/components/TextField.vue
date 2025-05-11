@@ -62,7 +62,7 @@ function handleEnter() {
       v-model="value"
       :placeholder="placeholder"
       :rows="rowNumber"
-      :class="['text-field-input', { 'has-error': !!error }]"
+      :class="['text-field-input', { 'has-error': !!error || !!errorMessage}]"
       @keydown.enter="handleEnter"
       :disabled="disable"
     />
@@ -72,7 +72,7 @@ function handleEnter() {
       :type="type || 'text'"
       v-model="value"
       :placeholder="placeholder"
-      :class="['text-field-input', { 'has-error': !!error }]"
+      :class="['text-field-input', { 'has-error': !!error || !!errorMessage }]"
       @keydown.enter="handleEnter"
       :disabled="disable"
     />
