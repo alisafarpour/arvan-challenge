@@ -73,8 +73,8 @@ const onSubmit = handleSubmit(
               <TextField name="password" label="Password" type="password" required />
             </div>
             <div class="grid-item xs-12">
-              <Button type="submit" variant="primary" :customStyle="{ width: '432px', marginTop: '10px' }">
-                Sign in
+              <Button type="submit" variant="primary" :loading="signUp.isPending.value" :customStyle="{ width: '432px', marginTop: '10px' }">
+                Sign up
               </Button>
               <div class="sign-up">
                 <span>Have an account?</span>

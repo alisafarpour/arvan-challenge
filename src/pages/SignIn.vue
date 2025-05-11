@@ -60,6 +60,8 @@ const onSubmit = handleSubmit(
     })
   },
 )
+
+console.log()
 </script>
 
 <template>
@@ -78,6 +80,7 @@ const onSubmit = handleSubmit(
               <Button
                 type="submit"
                 variant="primary"
+                :loading="signIn.isPending.value"
                 :customStyle="{ width: '432px', marginTop: '10px' }"
               >
                 Sign in
