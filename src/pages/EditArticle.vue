@@ -129,6 +129,9 @@ watch(
         <div class="loading-tags" v-if="getBackTags.isLoading.value">
           <LoadingSpinner variant="black" :size=20 />
         </div>
+        <div v-else-if="allTags.length === 0" class="loading-tags">
+          <span>No Data to Display</span>
+        </div>
         <div v-else class="grid-item xs-12 tag-item" v-for="tag in allTags" :key="tag">
           <Checkbox
               v-model="tagStates[tag]"
