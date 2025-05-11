@@ -54,8 +54,7 @@ const router = useRouter()
     justify-content: center;
     align-items: flex-start;
     flex-grow: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
   }
 }
 </style>
