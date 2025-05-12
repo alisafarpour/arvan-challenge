@@ -78,11 +78,7 @@ const openModal = (type: string, row: any) => {
   showModal.value = true
 }
 
-const closeModal = () => {
-  showModal.value = false
-  selectedRow.value = null
-  modalType.value = ''
-}
+
 </script>
 
 <template>
@@ -151,7 +147,7 @@ const closeModal = () => {
             <td style="display: flex; justify-content: center;">
               <Button :onClick="() => toggleMenu(index)" variant="secondary" just-icon><SvgView :icon="More" :size="20"/> </Button>
               <div v-if="menuIndex === index" class="menu">
-                <button @click="openModal('edit', row)">Edit</button>
+                <button @click="() => router.push(`/articles/edit/${row.slug}`)">Edit</button>
                 <button @click="() => actionDeleteClick(row)">Delete</button>
               </div>
             </td>

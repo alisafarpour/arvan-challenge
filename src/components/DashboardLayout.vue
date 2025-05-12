@@ -18,7 +18,7 @@ const router = useRouter()
             onClick: () => {
               router.push('/articles')
             },
-            selectionRule: (value: string) => value === '/articles',
+            selectionRule: (value: string) => value === '/articles' || value.includes('articles/page'),
           },
           {
             label: 'New Articles',

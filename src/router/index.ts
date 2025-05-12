@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import SignIn from "@/pages/SignIn.vue";
+import Articles from "@/pages/Articles.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,13 +19,13 @@ const router = createRouter({
     {
       path: '/articles',
       name: 'ArticlesRoot',
-      component: () => import("@/pages/Articles.vue"),
+      component: Articles,
       meta: { layout: 'DashboardLayout' }
     },
     {
       path: '/articles/page/:page',
       name: 'ArticlesPagination',
-      component: () => import("@/pages/Articles.vue"),
+      component: Articles,
       meta: { layout: 'DashboardLayout' },
       props: route => ({ page: parseInt(route.params.page as string) || 1 }),
     },

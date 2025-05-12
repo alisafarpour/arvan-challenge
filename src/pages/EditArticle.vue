@@ -11,15 +11,24 @@ import { useToast } from '@/composables/useToast.ts'
 import type { ARTICLE_SEND_TYPE, ARTICLE_TYPE } from '@/type/article-post.ts'
 import Checkbox from '@/components/Checkbox.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { queryClient } from '@/main.ts'
+import type {ARTICLE} from '@/type/articles-get.ts'
+import {usePutData} from "@/composables/usePutData.ts";
 
 const toast = useToast()
 const router = useRouter()
+const route = useRoute()
+
+const getArticleEndpoint = computed(() => `/articles/${route.params.slug}`)
+const editArticleEndpoint = computed(() => `/articles/${route.params.slug}`)
 
 const getBackTags = useGetData<{ tags: string[] }>('/tags', 'getTags')
 const postArticle = usePostData<ARTICLE_SEND_TYPE>('/articles', 'postArticle')
-const putArticle = usePostData(`/articles/${'slug'}`, 'putArticle')
+const putArticle = usePutData(editArticleEndpoint, 'putArticle')
+const getArticle = useGetData<{ article: ARTICLE }>(getArticleEndpoint, 'getSingleArticle', [
+  route.params.slug?.toString(),
+])
 
 const newTags = ref<string[]>([])
 const tagStates = ref<Record<string, boolean>>({})
@@ -37,13 +46,14 @@ const schema = yup.object({
   body: yup.string().required(),
 })
 
-const { handleSubmit } = useForm<ARTICLE_TYPE>({
+const { handleSubmit, setValues } = useForm<ARTICLE_TYPE>({
   validationSchema: schema,
 })
 
 const onSubmit = handleSubmit(
   (values) => {
-    postArticle.mutate(
+    const mutateTarget = route.params.slug ? putArticle : postArticle
+    mutateTarget.mutate(
       {
         article: {
           ...values,
@@ -56,18 +66,19 @@ const onSubmit = handleSubmit(
         onSuccess: () => {
           toast({
             type: 'success',
-            title: 'New-Article',
-            description: 'Added Successfully',
+            title: route.params.slug ? 'Edit-Article' : 'New-Article',
+            description: 'Successfully',
             duration: 3000,
           })
           queryClient.refetchQueries({ queryKey: ['getAllArticle'] })
+          queryClient.refetchQueries({ queryKey: ['getSingleArticle'] })
           router.push('/articles')
           queryClient.invalidateQueries({ queryKey: ['getTags'] })
         },
         onError: (err) => {
           toast({
             type: 'error',
-            title: 'New-Article Failed',
+            title: route.params.slug ? 'Edit-Article Failed' : 'New-Article Failed',
             description: `${err.message}`,
             duration: 3000,
           })
@@ -94,11 +105,31 @@ const allTags = computed(() => {
 watch(
   [() => getBackTags.data.value?.tags, newTags],
   ([newBackTags, newNewTags]) => {
-    const mergedTags = new Set([...(newBackTags || []), ...newNewTags])
+    if (!route.params.slug) {
+      const mergedTags = new Set([...(newBackTags || []), ...newNewTags])
 
-    for (const tag of mergedTags) {
-      if (!(tag in tagStates.value)) {
-        tagStates.value[tag] = true
+      for (const tag of mergedTags) {
+        if (!(tag in tagStates.value)) {
+          tagStates.value[tag] = true
+        }
+      }
+    }
+  },
+  { immediate: true },
+)
+
+watch(
+  () => getArticle.data.value,
+  (articleData: { article: ARTICLE } | undefined) => {
+    if (route.params.slug && articleData?.article) {
+      const { title, description, body, tagList } = articleData.article
+
+      setValues({ title, description, body })
+
+      if (tagList && Array.isArray(tagList)) {
+        for (const tag of tagList) {
+          tagStates.value[tag] = true
+        }
       }
     }
   },

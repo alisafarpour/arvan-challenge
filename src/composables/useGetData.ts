@@ -5,7 +5,7 @@ import { getCookieValue } from '@/utility/getCookieValue.ts'
 import type {MaybeRef} from "vue";
 import {computed, unref} from "vue";
 
-export const useGetData = <T>(endpoint: MaybeRef<string>, key: string, dynamicKeys?: MaybeRef<string | number[]>) => {
+export const useGetData = <T>(endpoint: MaybeRef<string>, key: string, dynamicKeys?: MaybeRef<(string | number)[]>) => {
 
   const reactiveEndpoint =  computed(() => unref(endpoint))
   const reactiveKeys = computed(() => [key, ...(unref(dynamicKeys) ?? [])])
