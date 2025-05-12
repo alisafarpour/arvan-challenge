@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, defineModel, isVNode, watch, unref } from 'vue'
 import Pagination from '@/components/Pagination.vue'
-import {useRouter} from "vue-router";
+import { useRouter } from 'vue-router'
 import SvgView from '@/components/SvgView.vue'
 import More from '@/assets/icons/ellipsis.svg'
-import Button from "@/components/Button.vue";
-
+import Button from '@/components/Button.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 interface Column {
   key: string
@@ -21,6 +21,7 @@ const props = defineProps<{
   allDataLength?: number
   rowsPerPage?: number
   pageNumber: number
+  loading?: boolean
   actionDeleteClick: (data: any) => void
 }>()
 
@@ -28,7 +29,7 @@ const emit = defineEmits<{
   (e: 'update:pageNumber', value: number): void
 }>()
 
-const router = useRouter();
+const router = useRouter()
 
 const internalPage = ref(1)
 const menuIndex = ref<number | null>(null)
@@ -61,8 +62,8 @@ const currentPage = computed({
 })
 
 const setPage = (page: number) => {
-  const path = page === 1 ? "/articles" : `/articles/page/${page}`;
-  router.push(path);
+  const path = page === 1 ? '/articles' : `/articles/page/${page}`
+  router.push(path)
   currentPage.value = page
   menuIndex.value = null
   selectedRow.value = null
@@ -77,14 +78,16 @@ const openModal = (type: string, row: any) => {
   selectedRow.value = row
   showModal.value = true
 }
-
-
 </script>
 
 <template>
   <div class="data-grid-container">
     <div class="data-grid">
-      <table class="data-table">
+      <div v-if="loading" class="no-data">
+        <LoadingSpinner variant="black" :size="40" />
+      </div>
+      <div v-else-if="paginatedData.length === 0" class="no-data">No Data to Display</div>
+      <table v-else class="data-table">
         <thead>
           <tr>
             <th
@@ -105,12 +108,12 @@ const openModal = (type: string, row: any) => {
         <tbody>
           <tr
             v-for="(row, index) in paginatedData"
-            :key="`${row.slug}-${index}-${currentPage}`"
+            :key="`${row?.slug}-${index}-${currentPage}`"
             class="table-row"
           >
             <td
               v-for="column in columns"
-              :key="`${column.key}/${row.slug}`"
+              :key="`${column.key}/${row?.slug}`"
               :style="{
                 width: column.width ? `${column.width}px` : 'auto',
                 minWidth: column.width ? `${column.width}px` : '100px',
@@ -144,11 +147,22 @@ const openModal = (type: string, row: any) => {
                 {{ row[column.key] }}
               </div>
             </td>
-            <td style="display: flex; justify-content: center;">
-              <Button :onClick="() => toggleMenu(index)" variant="secondary" just-icon><SvgView :icon="More" :size="20"/> </Button>
+            <td style="display: flex; justify-content: center">
+              <Button :onClick="() => toggleMenu(index)" variant="secondary" just-icon
+                ><SvgView :icon="More" :size="20" />
+              </Button>
               <div v-if="menuIndex === index" class="menu">
-                <button @click="() => router.push(`/articles/edit/${row.slug}`)">Edit</button>
-                <button @click="() => actionDeleteClick(row)">Delete</button>
+                <button @click="() => router.push(`/articles/edit/${row?.slug}`)">Edit</button>
+                <button
+                  @click="
+                    () => {
+                      toggleMenu(index)
+                      actionDeleteClick(row)
+                    }
+                  "
+                >
+                  Delete
+                </button>
               </div>
             </td>
           </tr>
@@ -184,6 +198,18 @@ const openModal = (type: string, row: any) => {
 
 .data-grid {
   overflow-x: auto;
+  min-height: 300px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  .no-data {
+    top: 50%;
+    position: absolute;
+    z-index: 2;
+    @include body1;
+  }
 
   .data-table {
     overflow: auto;
@@ -218,7 +244,7 @@ const openModal = (type: string, row: any) => {
     .table-row {
       height: 48px;
       max-height: 48px;
-      position: relative
+      position: relative;
     }
 
     .menu {

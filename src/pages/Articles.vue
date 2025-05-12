@@ -2,14 +2,14 @@
 import { useGetData } from '@/composables/useGetData.ts'
 import { computed, reactive, ref, watch } from 'vue'
 import DataGrid from '@/components/DataGrid.vue'
-import type {All_ARTICLE, ARTICLE} from '@/type/articles-get.ts'
+import type { All_ARTICLE, ARTICLE } from '@/type/articles-get.ts'
 import { ARTICLES_COLUMN } from '@/data/ArticlesColumn.ts'
 import Section from '@/components/Section.vue'
 import Modal from '@/components/Modal.vue'
 import { useRoute } from 'vue-router'
-import {useDeleteData} from "@/composables/useDeleteData.ts";
-import type {SIGN_IN_TYPE} from "@/type/sign-in-respose.ts";
-import {useToast} from "@/composables/useToast.ts";
+import { useDeleteData } from '@/composables/useDeleteData.ts'
+import type { SIGN_IN_TYPE } from '@/type/sign-in-respose.ts'
+import { useToast } from '@/composables/useToast.ts'
 
 const route = useRoute()
 const toast = useToast()
@@ -38,39 +38,42 @@ watch(
 )
 
 const handleAction = () => {
-  deleteArticle.mutate({},{
-    onSuccess: () => {
-      getArticles.refetch()
-      toast({
-        type: 'success',
-        title: 'Article',
-        description: 'Deleted successfully.',
-        duration: 3000,
-      })
+  deleteArticle.mutate(
+    {},
+    {
+      onSuccess: () => {
+        getArticles.refetch()
+        toast({
+          type: 'success',
+          title: 'Article',
+          description: 'Deleted successfully.',
+          duration: 3000,
+        })
+      },
+      onError: (err) => {
+        toast({
+          type: 'error',
+          title: 'Article Deleted Failed',
+          description: `${err.message}`,
+          duration: 3000,
+        })
+      },
     },
-    onError: (err) => {
-      toast({
-        type: 'error',
-        title: 'Article Deleted Failed',
-        description: `${err.message}`,
-        duration: 3000,
-      })
-    }
-  })
+  )
   showModal.value = false
 }
 
-const showModalHandler = (data : ARTICLE) => {
+const showModalHandler = (data: ARTICLE) => {
   deleteArticleData.value = data
   showModal.value = true
 }
-
 </script>
 
 <template>
   <div class="container">
     <Section title="All Posts">
       <DataGrid
+        :loading="!!getArticles?.isLoading?.value"
         :actionDeleteClick="showModalHandler"
         :allDataLength="getArticles.data.value?.articlesCount"
         v-model:pageNumber="pageNumber"
@@ -95,5 +98,6 @@ const showModalHandler = (data : ARTICLE) => {
   border: 1px solid $border-color;
   border-radius: $md-radius;
   overflow: hidden;
+  width: 100%;
 }
 </style>
