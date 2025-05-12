@@ -22,9 +22,11 @@ const router = createRouter({
       meta: { layout: 'DashboardLayout' }
     },
     {
-      path: '/articles/page/:page(\\d+)',
-      name: 'ArticlesPaginated',
-      component: () => import("@/pages/Articles.vue")
+      path: '/articles/page/:page',
+      name: 'ArticlesPagination',
+      component: () => import("@/pages/Articles.vue"),
+      meta: { layout: 'DashboardLayout' },
+      props: route => ({ page: parseInt(route.params.page as string) || 1 }),
     },
     {
       path: '/articles/create',
