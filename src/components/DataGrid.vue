@@ -21,6 +21,7 @@ const props = defineProps<{
   allDataLength?: number
   rowsPerPage?: number
   pageNumber: number
+  actionDeleteClick: (data: any) => void
 }>()
 
 const emit = defineEmits<{
@@ -151,7 +152,7 @@ const closeModal = () => {
               <Button :onClick="() => toggleMenu(index)" variant="secondary" just-icon><SvgView :icon="More" :size="20"/> </Button>
               <div v-if="menuIndex === index" class="menu">
                 <button @click="openModal('edit', row)">Edit</button>
-                <button @click="openModal('delete', row)">Delete</button>
+                <button @click="() => actionDeleteClick(row)">Delete</button>
               </div>
             </td>
           </tr>
