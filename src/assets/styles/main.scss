@@ -19,3 +19,20 @@ body {
   --black: #{$black};
   --neutral-default: #{$color-neutral-default};
 }
+
+.data-title {
+  @include body1;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.data-index {
+  @include caption1;
+  background-color: $color-neutral-bg-hover;
+  border-radius: $sm-radius;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

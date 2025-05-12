@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { defineProps, computed} from 'vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import { ref, defineExpose } from 'vue';
 
 // Define the props for the button component
 const props = defineProps({
@@ -25,7 +26,7 @@ const props = defineProps({
     default: 'primary',
   },
   type: {
-    type: String,
+    type: String as () => "button" | "submit" | "reset" | undefined,
   },
   customStyle: {
     type: Object as () => Record<string, string>,
@@ -47,6 +48,15 @@ const handleClick = (event: MouseEvent) => {
     props.onClick(event)
   }
 }
+
+
+
+const root = ref<HTMLButtonElement | null>(null);
+
+defineExpose({
+  $el: root,
+});
+
 </script>
 
 <template>
@@ -94,7 +104,7 @@ const handleClick = (event: MouseEvent) => {
 .btn-secondary {
   background-color: transparent;
   color: $color-neutral-default;
-  border: 1px solid $color-neutral-default;
+  border: 1px solid $color-neutral-disable;
 }
 
 .btn-secondary:hover {

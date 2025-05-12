@@ -37,10 +37,10 @@ const props = defineProps({
   sendOnEnter: { type: Boolean, default: false },
 })
 
-const { value, errorMessage } = useField(() => props.name)
+const { value, errorMessage } = useField<string | number | null | undefined>(() => props.name)
 
 const emit = defineEmits<{
-  (e: 'enter', value: string): void
+  (e: 'enter', value: unknown): void
 }>()
 
 function handleEnter() {
