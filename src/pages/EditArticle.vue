@@ -24,9 +24,11 @@ const putArticle = usePostData(`/articles/${'slug'}`, 'putArticle')
 const newTags = ref<string[]>([])
 const tagStates = ref<Record<string, boolean>>({})
 
-function onTextFieldEnter(value: string) {
-  newTags.value.push(value)
-  tagStates.value[value] = true
+function onTextFieldEnter(value: unknown) {
+  if (typeof value === 'string') {
+    newTags.value.push(value)
+    tagStates.value[value] = true
+  }
 }
 
 const schema = yup.object({
@@ -85,7 +87,7 @@ const onSubmit = handleSubmit(
 
 const allTags = computed(() => {
   const fetched = getBackTags.data.value?.tags || []
-  const combined = [...fetched, ...newTags.value]
+  const combined = [...fetched, ...newTags.value].sort((a, b) => a.localeCompare(b))
   return [...new Set(combined)]
 })
 
