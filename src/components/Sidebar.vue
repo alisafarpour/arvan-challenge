@@ -34,6 +34,9 @@ const route = useRoute()
   flex-direction: column;
   flex-shrink: 0;
   row-gap: 8px;
+  @media (max-width: 980px) {
+    flex-shrink: 1;
+  }
 }
 
 .sidebar-item {

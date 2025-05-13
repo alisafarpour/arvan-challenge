@@ -42,6 +42,9 @@ h2 {
   background-color: $bg-color;
   padding: 8px 12px;
   border-radius: $sm-radius;
+  @media (max-width: 450px) {
+    display: none;
+  }
 }
 
 p {

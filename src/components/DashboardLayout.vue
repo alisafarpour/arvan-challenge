@@ -55,6 +55,9 @@ const router = useRouter()
     align-items: flex-start;
     flex-grow: 1;
     overflow: hidden;
+    @media (max-width: 650px) {
+      overflow-y: auto;
+    }
   }
 }
 </style>

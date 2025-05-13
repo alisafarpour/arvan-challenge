@@ -3,19 +3,19 @@ import Section from '@/components/Section.vue'
 import Button from '@/components/Button.vue'
 import TextField from '@/components/TextField.vue'
 import LinkButton from '@/components/LinkButton.vue'
-import {useForm} from 'vee-validate'
+import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useToast } from '@/composables/useToast.ts'
 import { useRouter } from 'vue-router'
-import {usePostData} from "@/composables/usePostData.ts";
-import type {SIGN_IN_TYPE} from "@/type/sign-in-respose.ts";
+import { usePostData } from '@/composables/usePostData.ts'
+import type { SIGN_IN_TYPE } from '@/type/sign-in-respose.ts'
 
-type User_SIGN_IN_DATA = {email: string,password:string}
+type User_SIGN_IN_DATA = { email: string; password: string }
 
 const toast = useToast()
 const router = useRouter()
 
-const signIn = usePostData<{user: User_SIGN_IN_DATA},SIGN_IN_TYPE>('/users/login','signIn')
+const signIn = usePostData<{ user: User_SIGN_IN_DATA }, SIGN_IN_TYPE>('/users/login', 'signIn')
 
 const schema = yup.object({
   email: yup.string().email().required(),
@@ -28,27 +28,33 @@ const { handleSubmit } = useForm<User_SIGN_IN_DATA>({
 
 const onSubmit = handleSubmit(
   (values) => {
-    signIn.mutate({user :values},{
-      onSuccess: (data: SIGN_IN_TYPE) => {
-        toast({
-          type: 'success',
-          title: 'Sign in SuccessFull :)',
-          description: 'Enjoy Dashboard',
-          duration: 3000,
-        })
-        document.cookie=`token=${data.user.token}`
-        localStorage.setItem('user-data', JSON.stringify({username: data.user.username, pictureUrl: data.user.image}))
-        router.push('./articles')
+    signIn.mutate(
+      { user: values },
+      {
+        onSuccess: (data: SIGN_IN_TYPE) => {
+          toast({
+            type: 'success',
+            title: 'Sign in SuccessFull :)',
+            description: 'Enjoy Dashboard',
+            duration: 3000,
+          })
+          document.cookie = `token=${data.user.token}`
+          localStorage.setItem(
+            'user-data',
+            JSON.stringify({ username: data.user.username, pictureUrl: data.user.image }),
+          )
+          router.push('./articles')
+        },
+        onError: (err) => {
+          toast({
+            type: 'error',
+            title: 'Sign In Faild!',
+            description: `${err.message}`,
+            duration: 3000,
+          })
+        },
       },
-      onError: (err) => {
-        toast({
-          type: 'error',
-          title: 'Sign In Faild!',
-          description: `${err.message}`,
-          duration: 3000,
-        })
-      }
-    })
+    )
   },
   (submitErrors) => {
     toast({
@@ -78,7 +84,7 @@ const onSubmit = handleSubmit(
                 type="submit"
                 variant="primary"
                 :loading="signIn.isPending.value"
-                :customStyle="{ width: '432px', marginTop: '10px' }"
+                class="submit-button"
               >
                 Sign in
               </Button>
@@ -108,8 +114,20 @@ const onSubmit = handleSubmit(
   border: 1px solid $border-color;
   border-radius: $md-radius;
   width: 480px;
+
+  @media (max-width: 580px) {
+    width: 250px;
+  }
 }
 
+.submit-button {
+  width: 100%;
+  margin-top: 10px;
+
+  @media (min-width: 581px) {
+    width: 432px;
+  }
+}
 .sign-up {
   margin-top: 12px;
   display: flex;

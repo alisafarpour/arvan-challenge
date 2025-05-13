@@ -190,6 +190,11 @@ watch(
   flex-direction: row;
   align-content: flex-start;
   width: 100%;
+  @media (max-width: 650px) {
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+  }
 }
 
 .new-article-container {
@@ -208,6 +213,9 @@ watch(
   padding: 24px;
   height: 100%;
   flex-shrink: 0;
+  @media (max-width: 980px) {
+    width: 130px;
+  }
 }
 
 .tags-list {
@@ -219,6 +227,9 @@ watch(
   row-gap: 16px;
   max-height: 650px;
   overflow-y: auto;
+  @media (max-width: 980px) {
+    width: 100px;
+  }
 }
 
 .loading-tags {
@@ -227,6 +238,9 @@ watch(
   display: flex;
   justify-content: center;
   align-items: center;
+  @media (max-width: 980px) {
+    width: 100px;
+  }
 }
 
 .tag-item {

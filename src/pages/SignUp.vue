@@ -6,12 +6,11 @@ import LinkButton from '@/components/LinkButton.vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useToast } from '@/composables/useToast.ts'
-import {usePostData} from "@/composables/usePostData.ts";
-import router from "@/router";
+import { usePostData } from '@/composables/usePostData.ts'
+import router from '@/router'
 
 const toast = useToast()
-const signUp = usePostData('/users','signUp')
-
+const signUp = usePostData('/users', 'signUp')
 
 const schema = yup.object({
   username: yup.string().required(),
@@ -25,25 +24,28 @@ const { handleSubmit } = useForm({
 
 const onSubmit = handleSubmit(
   (values) => {
-    signUp.mutate({user :values},{
-      onSuccess: () => {
-        toast({
-          type: 'success',
-          title: 'Sign Up SuccessFull :)',
-          description: 'Now please login',
-          duration: 3000,
-        })
-        router.push('./login')
+    signUp.mutate(
+      { user: values },
+      {
+        onSuccess: () => {
+          toast({
+            type: 'success',
+            title: 'Sign Up SuccessFull :)',
+            description: 'Now please login',
+            duration: 3000,
+          })
+          router.push('./login')
+        },
+        onError: (err) => {
+          toast({
+            type: 'error',
+            title: 'Sign Up Faild!',
+            description: `${err.message}`,
+            duration: 3000,
+          })
+        },
       },
-      onError: (err) => {
-        toast({
-          type: 'error',
-          title: 'Sign Up Faild!',
-          description: `${err.message}`,
-          duration: 3000,
-        })
-      }
-    })
+    )
   },
   () => {
     toast({
@@ -72,7 +74,12 @@ const onSubmit = handleSubmit(
               <TextField name="password" label="Password" type="password" required />
             </div>
             <div class="grid-item xs-12">
-              <Button type="submit" variant="primary" :loading="signUp.isPending.value" :customStyle="{ width: '432px', marginTop: '10px' }">
+              <Button
+                type="submit"
+                variant="primary"
+                :loading="signUp.isPending.value"
+                class="submit-button"
+              >
                 Sign up
               </Button>
               <div class="sign-up">
@@ -101,6 +108,19 @@ const onSubmit = handleSubmit(
   border: 1px solid $border-color;
   border-radius: $md-radius;
   width: 480px;
+
+  @media (max-width: 580px) {
+    width: 250px;
+  }
+}
+
+.submit-button {
+  width: 100%;
+  margin-top: 10px;
+
+  @media (min-width: 581px) {
+    width: 432px;
+  }
 }
 
 .sign-up {
