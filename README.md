@@ -1,6 +1,6 @@
 # arvan-challenge-front
-This template should help get you started developing with Vue 3 in Vite.
-
+developing with Vue 3 composition api , typescript, scss, vue query , vee validation and Vite.
+in 2025
 ## Prerequisites
 Make sure you have the following installed:
 - [Node.js](https://nodejs.org/en/download)
@@ -50,6 +50,15 @@ npx prisma migrate deploy
 
 ### 3.The final step is to run the back-end server.
 At the end, in the root of the `node-express-realworld-example-app` run this command:
+```sh
+npm install
+npm run start
+```
+
+## Front - End Section 
+In the root directory, there's a `config.ts` file where you can choose your environment and back-end endpoint. If you've cloned the back-end API, use `localEndpoint`. or you don't have CORS errors you can select the `testEnvEndpoint`. 
+
+### Run Front
 ```sh
 npm install
 npm run dev
